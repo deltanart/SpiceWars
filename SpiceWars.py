@@ -1,5 +1,7 @@
 import tkinter, random
-
+#------------------------------------
+#------- Beginnvariablen-------------
+#------------------------------------
 Geld = 1000
 Laderaum = 100
 Gewuerze = ["Pfeffer", "Muskat", "Nelken", "Vanille", "Zimt"]
@@ -7,7 +9,20 @@ aktKosten = [100, 30, 50 , 20 ,10]
 KostenMin = [50, 5 , 20 , 100, 60]
 KostenMax = [150, 35 , 170 , 450, 300]
 EigeneLadung = [0,0,0,0,0]
+Ort = "Rom"
 
+#-----------------------------------------------------------
+#------- Spielinhalte --- (Hintergrundfunktionen) ----------
+#-----------------------------------------------------------
+
+#def News(): #Marktbewegung
+
+#def Piraten!():
+
+#def Verschleiss():  #minimaler Schaden beim Auslaufen / Weitersegeln
+
+#def Zeit(): #Epochen oder ablaufende Zeit?
+  
 
 def DisplayAktualisieren():
   global Gewuerze
@@ -39,19 +54,24 @@ def DisplayAktualisieren():
   ListeStaedte.insert("end", "Rom")
   ListeStaedte.insert("end", "Barcelona")
 
+  LabelOrt.config(text ="aktueller Ort: " + str(Ort))
 
 
+#----------------------------------------------------------
+#----- Buttons --------------------------------------------
+#----------------------------------------------------------
 def NeuesSpiel():
   global aktKosten
   global EigeneLadung
   global Geld
   global Laderaum
+  global Ort
   aktKosten = [100, 30, 50 , 20 ,10]
   EigeneLadung = [0,0,0,0,0]
   Geld = 1000
   Laderaum = 100
   DisplayAktualisieren()
-
+  Ort = "Rom"
 
 def kaufen():
   global Geld
@@ -82,58 +102,89 @@ def verkaufen():
   DisplayAktualisieren()
 
 def Weitersegeln():
+  global Ort
   global ListeStaedte
   global aktKosten
   global KostenMin
   global KostenMax
   Nummer = int(ListeStaedte.curselection()[0])
   Stadt = ListeStaedte.get(Nummer)
+  Ort = str(Stadt)
   tkinter.messagebox.showinfo("- R E I S E I N F O -","Ihre Reise geht nach " + Stadt + ".\n Der Wind steht gut.\n Sie brauchen 2 Wochen")
   for i in range (5):
     aktKosten[i] =  random.randint(KostenMin[i],KostenMax[i])
   DisplayAktualisieren()
 
+def Schiffe():
+  global Geld
+  global aktKostenSchiff
+  global LaderaumSchiffNeu
+  global EigeneLadung
+  global ListeSchiffe
+  global Laderaum
+  Nummer = int(ListeSchiffe.curselection()[0])
+  if (Geld >= aktKostenSchiff[Nummer]):
+      Laderaum = LaderaumSchiffNeu
+      Geld = Geld - int(aktKostenSchiff[Nummer])
+      EigeneLadung = [0,0,0,0,0]
+  DisplayAktualisieren()
 
+#------------------ GUI ----------------------------------------
+#----------------- Hauptfenster --------------------------------
 
-#GUI ----------------------------------------
-#Hauptfenster
+  
 Fenster = tkinter.Tk()
 Fenster.title("SpiceWars")
 
-#-------------------------
 
-Liste = tkinter.Listbox (width=30, height = 10)
-Liste.grid(padx = 5, pady = 5, row = 1, column = 1, columnspan = 1, rowspan=3)
+#---------------------------------------------------------------
+#--------------- Label -----------------------------------------
+#---------------------------------------------------------------
+
 
 LabelMenge = tkinter.Label(Fenster, text = 'Menge: ')
+LabelMenge.grid (padx = 5, pady=5, row = 0, column = 2)
 
-LabelMenge.grid (padx = 5, pady=5, row = 1, column = 2)
+LabelOrt = tkinter.Label(Fenster, text = 'aktueller Ort: '+ str(Ort))
+LabelOrt.grid (padx = 5, pady=5, row = 0, column = 8)
+
+
+#-------------------------------------------------------------
+#------------ Listbox & Eingabe ------------------------------
+#-------------------------------------------------------------
+
+
+Liste = tkinter.Listbox (width=30, height = 20)
+Liste.grid(padx = 5, pady = 5, row = 1, column = 1, columnspan = 1, rowspan=9)
+
+ListeStaedte = tkinter.Listbox (width=30, height = 20)
+ListeStaedte.grid(padx = 5, pady = 20, row = 1, column = 8, columnspan = 1, rowspan=9)
+
+ListeLaderaum = tkinter.Listbox (width=30, height = 20)
+ListeLaderaum.grid(padx = 5, pady = 5, row = 1, column = 5, columnspan = 2, rowspan=9)
+
 EingabeMenge = tkinter.Entry(Fenster, width = 4)
-EingabeMenge.grid(padx = 5, pady = 5, row = 1, column = 3)
+EingabeMenge.grid(padx = 5, pady = 5, row = 0, column = 3)
+
+
+#-----------------------------------------------------------
+#------------ Buttons --------------------------------------
+#-----------------------------------------------------------
+
 
 ButtonKaufen = tkinter.Button(Fenster, text=' kaufen  >>> ', command = kaufen)
 ButtonKaufen.grid(padx=5, pady = 5, row =2, column = 2, columnspan=2)
+
 ButtonVerkaufen = tkinter.Button(Fenster, text=' <<< verkaufen ', command = verkaufen)
 ButtonVerkaufen.grid(padx=5, pady = 5, row =3, column = 2, columnspan=2)
-
-ListeLaderaum = tkinter.Listbox (width=30, height = 10)
-ListeLaderaum.grid(padx = 5, pady = 5, row = 1, column = 5, columnspan = 2, rowspan=3)
-
-
-#-----------------------
-ListeStaedte = tkinter.Listbox (width=30, height = 6)
-ListeStaedte.grid(padx = 5, pady = 20, row = 4, column = 1, columnspan = 1, rowspan=3)
 
 ButtonBewegen = tkinter.Button(Fenster, text = ' weitersegeln ... ', command = Weitersegeln)
 ButtonBewegen.grid(row=4, column=2, padx=5, pady=25, columnspan = 2)
 
 ButtonNeustart = tkinter.Button(Fenster, text = ' neues Spiel ', command = NeuesSpiel)
-ButtonNeustart.grid(row=4, column=5, padx=5, pady=25)
+ButtonNeustart.grid(row=0, column=1, padx=5, pady=10)
 
 NeuesSpiel()
 # ---------------------
 Fenster.mainloop()
-
-
-
 
